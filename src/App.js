@@ -1,11 +1,12 @@
 import React from 'react';
+import socket from '../src/socket';
 
 function App() {
   const [data, setValue] = React.useState({roomId: '', name: ''});
   const {name, roomId} = data;
 
   const handlerSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault();    
   };
 
   const handlerChange = (e) => {

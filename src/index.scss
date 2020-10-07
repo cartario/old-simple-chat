@@ -45,6 +45,9 @@ code {
 .button {
   &:disabled {
     background-color: grey;
+  }
+  &:active {
+    background-color: lightgreen;
   }  
 }
 
