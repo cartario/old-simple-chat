@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+.container {
+  display: flex;
+  align-items: center;
+  height: 300px;
+}
+
+.form {
+  width: 300px;  
+  margin: 0 auto;
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.roomId {
+  font: inherit;
+}
+
+.button {
+  width: 100%;
+  padding: 5px;
+  color: white;
+  background-color: green;
+  border: none;
+  border-radius: 1px;
+}
+
+.button {
+  &:disabled {
+    background-color: grey;
+  }  
+}
+
+

@@ -1,24 +1,49 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
 function App() {
+  const [data, setValue] = React.useState({roomId: '', name: ''});
+  const {name, roomId} = data;
+
+  const handlerSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  const handlerChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setValue({
+      ...data, [name]: value
+    });     
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="container">
+        <form className="form" onSubmit={handlerSubmit}>
+        <div className="inputBox">
+          <input className="input roomId"
+            name="roomId"
+            id="roomId"
+            type="text"
+            placeholder="roomID"
+            value={roomId}
+            onChange={handlerChange}
+            />
+        </div>
+        <div className="inputBox">
+          <input className="input name"
+            name="name"
+            id="name"
+            type="text"
+            placeholder="name"
+            value={name}
+            onChange={handlerChange}
+            />
+        </div>       
+        <button disabled={!name&!roomId} className="button" type="submit">ВОЙТИ</button>
+      </form>
+      </div>
     </div>
   );
 }
