@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import socket from '../src/socket';
+import Container from './sobes';
 
 const reducer = (state, action) => {
   switch(action.type){
@@ -51,6 +52,7 @@ function App() {
     });
   }, []);
 console.log(state)
+
   return (
     <div className="App">
       <div className="container">
@@ -78,18 +80,21 @@ console.log(state)
               />
           </div>       
           <button disabled={!username&!roomId} className="button" type="submit">ВОЙТИ</button>
-        </form>
+        </form>        
+        
         :   
 
         <div className="authorized">
           <h1>Authorized</h1>
           <p>Room: {roomId}</p>
           <p>User: {username}</p>
-        </div> 
-
+          
+        </div>
         }
-
+        
+        
       </div>
+      <Container/>
     </div>
   );
 }

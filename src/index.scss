@@ -14,9 +14,10 @@ code {
 
 
 .container {
+  position: relative;
   display: flex;
   align-items: center;
-  height: 300px;
+  min-height: 300px;
 }
 
 .form {
@@ -51,4 +52,27 @@ code {
   }  
 }
 
+.block-wrapper {
+  border: 1px solid black;
+}
 
+.block {
+  height: 200px;
+  width: 250px;
+  background-color: red;
+  margin: 8px 16px;
+}
+
+.btn {
+  margin: 120px 15px 0;
+  padding: 15px;
+}
+
+.top-section {  
+  display: flex;
+  padding: 15px;
+  justify-content: space-around;
+  width: 250px;
+  background-color: orange;
+  border: 1px solid black;
+}
