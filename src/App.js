@@ -90,8 +90,7 @@ console.log(state)
           <p>User: {username}</p>
           
         </div>
-        }
-        
+        }        
         
       </div>
       <Container/>

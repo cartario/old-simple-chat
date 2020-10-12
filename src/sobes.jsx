@@ -16,19 +16,16 @@ export default function() {
 
   React.useEffect(()=>{
     const topSection = topSectionRef.current;
+
     window.addEventListener('scroll', ()=>{
       const {scrollY} = window;
-
-      if(scrollY > 100){
-        console.log('>100',scrollY)
+      if(scrollY > 100){        
         topSection.style.position = "sticky";
         topSection.style.top = 0;
-      } else {
-        console.log('<100',scrollY);
+      } else {        
         topSection.style.position = "static";
       }
-    })
-    console.log(topSection);
+    })    
   },[])
 
   return (
