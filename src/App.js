@@ -3,10 +3,15 @@ import axios from 'axios';
 import socket from '../src/socket';
 import Container from './sobes';
 
+
 const reducer = (state, action) => {
   switch(action.type){
     case 'JOINED':
-      return {...state, joined: true, roomId: action.payload.roomId, username: action.payload.username}
+      return {...state, joined: true, roomId: action.payload.roomId, username: action.payload.username};
+    case 'SET_USERS':
+      return {...state, users: action.payload};
+    case 'SET_MESSAGES':
+      return {...state, messages: action.payload}
     default:
       return state;
   }
@@ -16,12 +21,19 @@ const initialState = {
   joined: false,
   roomId: null,
   username: null,
+  users: [],
+  messages: []
 };
 
 function App() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const [data, setValue] = React.useState({roomId: '', username: ''});
+  const [data, setValue] = React.useState({roomId: '', username: ''});  
+  const [input, setInput] = React.useState('');
   const {roomId, username} = data;
+
+  const handleChange = (e) => {    
+    setInput(e.target.value);
+  }
 
   const onLogin = () => {
     dispatch({
@@ -46,13 +58,19 @@ function App() {
     });     
   };
 
-  React.useEffect(()=>{
-    socket.on('ROOM:JOINED', (users)=>{
-      console.log(users);
-    });
-  }, []);
-console.log(state)
+const setUsers = (users)=>{ 
+  dispatch({
+    type: 'SET_USERS',
+    payload: users
+  })
+};
 
+  React.useEffect(()=>{
+    socket.on('ROOM:JOINED', setUsers);    
+    socket.on('ROOM:SET_USERS', setUsers);
+  }, []);
+
+console.log(state)
   return (
     <div className="App">
       <div className="container">
@@ -88,6 +106,26 @@ console.log(state)
           <h1>Authorized</h1>
           <p>Room: {roomId}</p>
           <p>User: {username}</p>
+
+        <div>Online({state.users.length}): {state.users.map((user)=><p className="online" key={user}>{user}</p>)}</div>      
+          <div className="message">
+            <p className="text">Text message</p>
+            <span>Username: test</span>
+            <p></p>
+          </div>
+          <div className="message">
+            <p className="text">Text message</p>
+            <span>Username: test</span>
+            <p></p>
+          </div>
+          <form onSubmit={(evt)=>evt.preventDefault()}>
+            <textarea 
+            rows="3 "
+            value={input}
+            onChange={handleChange}
+            placeholder="text here"/>
+            <button type="submit">SEND</button>
+          </form>
           
         </div>
         }        

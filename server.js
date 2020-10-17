@@ -34,18 +34,26 @@ app.post('/rooms', (req, res)=>{
   }); 
   
   
-});
+}); 
 
 io.on('connection', (socket)=>{
-  socket.on('ROOM:JOIN', (data) => {
+  socket.on('ROOM:JOIN', (data) => { 
     socket.join(data.roomId);
     const user = rooms.get(data.roomId).get('users').set(socket.id, data.username);
-    const users = rooms.get(data.roomId).get('users').values();
-    socket.to(data.roomId).broadcast.emit('ROOM:JOINED', users);
-    
+    const users = [...rooms.get(data.roomId).get('users').values()] ;
+    socket.to(data.roomId).broadcast.emit('ROOM:JOINED',  users);      
   });
-  
-})
+
+  socket.on('disconnect', () => {
+    rooms.forEach((value, roomId)=>{
+      if(value.get('users').delete(socket.id)){
+        const users = [...value.get('users').values()];
+        console.log(users)
+        socket.to(roomId).broadcast.emit('ROOM:SET_USERS',  users);   
+      }
+    })
+  });
+});
 
 server.listen(PORT, (err)=>{
   if(err){

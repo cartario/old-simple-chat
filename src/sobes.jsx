@@ -48,7 +48,7 @@ export default function() {
             Reset count
           </button>
         </div>
-        {Array.from('1234567890').map((item)=><Item
+        {Array.from('1234567890').map((item)=><Item key={item}
           onAdd={() => {
             setCount(count + 1);
           }}
