@@ -2,38 +2,17 @@ import React from 'react';
 import axios from 'axios';
 import socket from '../src/socket';
 import Container from './sobes';
-
-
-const reducer = (state, action) => {
-  switch(action.type){
-    case 'JOINED':
-      return {...state, joined: true, roomId: action.payload.roomId, username: action.payload.username};
-    case 'SET_USERS':
-      return {...state, users: action.payload};
-    case 'SET_MESSAGES':
-      return {...state, messages: action.payload}
-    default:
-      return state;
-  }
-};
-
-const initialState = {
-  joined: false,
-  roomId: null,
-  username: null,
-  users: [],
-  messages: []
-};
+import Login from './components/login';
+import Messages from './components/messages';
+import NewMessage from './components/new-message';
+import {reducer, initialState} from './reducer';
 
 function App() {
+  const [visible, setVisible] = React.useState(false);
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [data, setValue] = React.useState({roomId: '', username: ''});  
   const [input, setInput] = React.useState('');
-  const {roomId, username} = data;
-
-  const handleChange = (e) => {    
-    setInput(e.target.value);
-  }
+  const {roomId, username} = data; 
 
   const onLogin = () => {
     dispatch({
@@ -42,64 +21,51 @@ function App() {
     });
 
     socket.emit('ROOM:JOIN', data);
-  };  
-  
-  const handlerSubmit = (e) => {    
+  }; 
+
+  const handleSubmitRoom = (e) => {    
     e.preventDefault();
     axios.post('/rooms', data).then(onLogin);
   };
 
-  const handlerChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-
-    setValue({
-      ...data, [name]: value
-    });     
+  const setUsers = (users)=>{ 
+    dispatch({
+      type: 'SET_USERS',
+      payload: users
+    })
   };
 
-const setUsers = (users)=>{ 
-  dispatch({
-    type: 'SET_USERS',
-    payload: users
-  })
-};
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    const formData = {
+      roomId,
+      text: input,
+      userName: username
+    };
+    socket.emit('ROOM:NEW_MESSAGE', formData);
+  }
 
   React.useEffect(()=>{
     socket.on('ROOM:JOINED', setUsers);    
     socket.on('ROOM:SET_USERS', setUsers);
+    socket.on('ROOM:SET_MESSAGE', (obj)=>{      
+      console.log(obj)
+    }); 
   }, []);
 
-console.log(state)
+  const handleToggle = () => {
+    setVisible(!visible)
+  };
+
   return (
     <div className="App">
       <div className="container">
 
         {!state.joined ? 
-        <form className="form" onSubmit={handlerSubmit}>
-          <div className="inputBox">
-            <input className="input roomId"
-              name="roomId"
-              id="roomId"
-              type="text"
-              placeholder="roomID"
-              value={roomId}
-              onChange={handlerChange}
-              />
-          </div>
-          <div className="inputBox">
-            <input className="input name"
-              name="username"
-              id="name"
-              type="text"
-              placeholder="name"
-              value={username}
-              onChange={handlerChange}
-              />
-          </div>       
-          <button disabled={!username&!roomId} className="button" type="submit">ВОЙТИ</button>
-        </form>        
-        
+        <Login
+          data={data}
+          handlerSubmit={handleSubmitRoom}
+          setValue={setValue}/>       
         :   
 
         <div className="authorized">
@@ -108,30 +74,14 @@ console.log(state)
           <p>User: {username}</p>
 
         <div>Online({state.users.length}): {state.users.map((user)=><p className="online" key={user}>{user}</p>)}</div>      
-          <div className="message">
-            <p className="text">Text message</p>
-            <span>Username: test</span>
-            <p></p>
-          </div>
-          <div className="message">
-            <p className="text">Text message</p>
-            <span>Username: test</span>
-            <p></p>
-          </div>
-          <form onSubmit={(evt)=>evt.preventDefault()}>
-            <textarea 
-            rows="3 "
-            value={input}
-            onChange={handleChange}
-            placeholder="text here"/>
-            <button type="submit">SEND</button>
-          </form>
-          
+          <Messages />
+          <NewMessage handleSubmitForm={handleSubmitForm} input={input} setInput={setInput}/>          
         </div>
         }        
         
       </div>
-      <Container/>
+      <button onClick={handleToggle}>{visible ? 'Hide' : 'More'}</button>
+      {visible ? <Container/> : ''}
     </div>
   );
 }
