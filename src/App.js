@@ -12,14 +12,19 @@ function App() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [data, setValue] = React.useState({roomId: '', username: ''});  
   const [input, setInput] = React.useState('');
-  const {roomId, username} = data; 
+  const {roomId, username} = data;  
 
-  const onLogin = () => {
+  const onLogin = async () => {
     dispatch({
       type: 'JOINED', 
       payload: data
     });
-
+    axios.get(`/rooms/${roomId}`).then((res)=>{
+      dispatch({
+        type: 'SET_DATA',
+        payload: res.data,
+      })
+    });
     socket.emit('ROOM:JOIN', data);
   }; 
 
@@ -28,10 +33,17 @@ function App() {
     axios.post('/rooms', data).then(onLogin);
   };
 
-  const setUsers = (users)=>{ 
+  const setUsers = (users)=>{    
     dispatch({
       type: 'SET_USERS',
       payload: users
+    })
+  };
+
+  const addMessage = (obj) => {
+    dispatch({
+      type: 'NEW_MESSAGES',
+      payload: obj, 
     })
   };
 
@@ -42,20 +54,20 @@ function App() {
       text: input,
       userName: username
     };
+    setInput('');
     socket.emit('ROOM:NEW_MESSAGE', formData);
-  }
+    addMessage(formData);
+  };
 
-  React.useEffect(()=>{
-    socket.on('ROOM:JOINED', setUsers);    
+  React.useEffect(()=>{     
     socket.on('ROOM:SET_USERS', setUsers);
-    socket.on('ROOM:SET_MESSAGE', (obj)=>{      
-      console.log(obj)
-    }); 
+    socket.on('ROOM:NEW_MESSAGE', addMessage); 
   }, []);
 
   const handleToggle = () => {
     setVisible(!visible)
   };
+
 
   return (
     <div className="App">
@@ -74,8 +86,10 @@ function App() {
           <p>User: {username}</p>
 
         <div>Online({state.users.length}): {state.users.map((user)=><p className="online" key={user}>{user}</p>)}</div>      
-          <Messages />
-          <NewMessage handleSubmitForm={handleSubmitForm} input={input} setInput={setInput}/>          
+          
+          <Messages messages={state.messages}/>          
+          <NewMessage handleSubmitForm={handleSubmitForm} input={input} setInput={setInput}/> 
+                  
         </div>
         }        
         

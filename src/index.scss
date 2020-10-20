@@ -77,6 +77,15 @@ code {
   border: 1px solid black;
 }
 
+.authorized {
+  height: 500px;
+}
+
+.messages {  
+  height: calc(100% - 155px);
+  overflow: auto;
+}
+
 .message {
   margin-bottom: 15px;
   padding: 5px;
