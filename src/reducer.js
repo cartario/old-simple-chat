@@ -3,7 +3,8 @@ export const initialState = {
   roomId: null,
   username: null,
   users: [],
-  messages: []
+  messages: [],
+  typing: null
 };
 
 export const reducer = (state, action) => {
@@ -18,7 +19,9 @@ export const reducer = (state, action) => {
         messages: action.payload.messages,
       };
     case 'NEW_MESSAGES':
-      return {...state, messages: [...state.messages, action.payload]}
+      return {...state, messages: [...state.messages, action.payload]};
+    case 'SET_TYPING':
+      return {...state, typing: action.payload}
     default:
       return state;
   }

@@ -12,7 +12,9 @@ function App() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [data, setValue] = React.useState({roomId: '', username: ''});  
   const [input, setInput] = React.useState('');
-  const {roomId, username} = data;  
+  const {roomId, username} = data; 
+  
+  const typing = true
 
   const onLogin = async () => {
     dispatch({
@@ -87,8 +89,15 @@ function App() {
 
         <div>Online({state.users.length}): {state.users.map((user)=><p className="online" key={user}>{user}</p>)}</div>      
           
-          <Messages messages={state.messages}/>          
-          <NewMessage handleSubmitForm={handleSubmitForm} input={input} setInput={setInput}/> 
+          <Messages messages={state.messages}/> 
+        <p>Status: {state.typing ? `${state.typing} typing...` : ''}</p>         
+          <NewMessage 
+          dispatch={dispatch}
+          handleSubmitForm={handleSubmitForm}
+           input={input} 
+           setInput={setInput} 
+           username={username} 
+           roomId={roomId}/> 
                   
         </div>
         }        

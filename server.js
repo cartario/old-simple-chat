@@ -37,9 +37,7 @@ app.post('/rooms', (req, res)=>{
   res.json({
     status: 'success',
     data: [...rooms.keys()]
-  }); 
-  
-  
+  });  
 }); 
 
 io.on('connection', (socket)=>{
@@ -60,11 +58,14 @@ io.on('connection', (socket)=>{
     socket.to(roomId).emit('ROOM:NEW_MESSAGE', obj);
   });
 
+  socket.on('ROOM:TYPING', (data) => {    
+    socket.to(data.roomId).emit('ROOM:TYPING', data);
+  });
+
   socket.on('disconnect', () => {
     rooms.forEach((value, roomId)=>{
       if(value.get('users').delete(socket.id)){
-        const users = [...value.get('users').values()];
-        console.log(users)
+        const users = [...value.get('users').values()];        
         socket.to(roomId).broadcast.emit('ROOM:SET_USERS',  users);   
       }
     })
